@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Web Browser</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+        body {
+            background-color: #202124;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .browser-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 85vh;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .toolbar {
+            background-color: #f1f3f4;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #dadce0;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #5f6368;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #e8eaed;
+            color: #202124;
+        }
+        .address-bar-container {
+            flex-grow: 1;
+        }
+        .address-bar {
+            width: 100%;
+            height: 34px;
+            background-color: #f8f9fa;
+            border: 1px solid #dadce0;
+            border-radius: 17px;
+            padding: 0 16px;
+            font-size: 14px;
+            outline: none;
+        }
+        .address-bar:focus {
+            background-color: #fff;
+            border-color: #1a73e8;
+            box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+        }
+        .viewport-container {
+            flex-grow: 1;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .security-warning {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background-color: #323232;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="browser-container">
+    <!-- Top toolbar resembling popular browser styles -->
+    <div class="toolbar">
+        <div class="nav-buttons">
+            <button class="btn" id="back-btn" title="Back">&#x2190;</button>
+            <button class="btn" id="forward-btn" title="Forward">&#x2192;</button>
+            <button class="btn" id="refresh-btn" title="Refresh">&#x21BB;</button>
+            <button class="btn" id="home-btn" title="Home">&#x2302;</button>
+        </div>
+        <div class="address-bar-container">
+            <input type="text" class="address-bar" id="url-input" value="https://wikipedia.org">
+        </div>
+    </div>
+
+    <!-- The actual viewport rendering pages -->
+    <div class="viewport-container">
+        <iframe id="browser-viewport" src="https://wikipedia.org"></iframe>
+        <div class="security-warning">
+          
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlInput = document.getElementById('url-input');
+    const viewport = document.getElementById('browser-viewport');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const homeBtn = document.getElementById('home-btn');
+    const backBtn = document.getElementById('back-btn');
+    const forwardBtn = document.getElementById('forward-btn');
+
+    const defaultHome = "https://wikipedia.org";
+
+    // Triggers navigation changes inside the iframe window 
+    function navigateToUrl() {
+        let url = urlInput.value.trim();
+        
+        // Auto-inject protocol if missing
+        if (!/^https?:\/\//i.test(url)) {
+            url = 'https://' + url;
+        }
+        
+        urlInput.value = url;
+        viewport.src = url;
+    }
+
+    urlInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            navigateToUrl();
+        }
+    });
+
+    refreshBtn.addEventListener('click', function() {
+        viewport.src = viewport.src; 
+    });
+
+    homeBtn.addEventListener('click', function() {
+        urlInput.value = defaultHome;
+        viewport.src = defaultHome;
+    });
+
+    // Notice handling history restrictions
+    const securityNotice = () => alert("For security, cross-origin web browser scripts cannot read or force history movements inside an <iframe> layout shell.");
+    backBtn.addEventListener('click', securityNotice);
+    forwardBtn.addEventListener('click', securityNotice);
+</script>
+
+</body>
+</html>
+
+// Code made by @amnmk on GitHub.
